@@ -12,8 +12,8 @@ import androidx.lifecycle.lifecycleScope
 import kotlinx.coroutines.launch
 
 /**
- * Coordinates the complete onboarding flow including permission explanation,
- * permission requests, and initialization of the mesh service
+ * ينسق عملية الإعداد الأولي الكاملة بما في ذلك شرح الصلاحيات،
+ * طلبات الصلاحيات، وتهيئة خدمة الشبكة اللاسلكية
  */
 class OnboardingCoordinator(
     private val activity: ComponentActivity,
@@ -33,7 +33,7 @@ class OnboardingCoordinator(
     }
 
     /**
-     * Setup the permission request launcher
+     * إعداد نافذة طلب الصلاحيات
      */
     private fun setupPermissionLauncher() {
         permissionLauncher = activity.registerForActivityResult(
@@ -44,26 +44,26 @@ class OnboardingCoordinator(
     }
 
     /**
-     * Start the onboarding process
+     * بدء عملية الإعداد الأولي
      */
     fun startOnboarding() {
-        Log.d(TAG, "Starting onboarding process")
+        Log.d(TAG, "بدء عملية الإعداد الأولي")
         permissionManager.logPermissionStatus()
 
         if (permissionManager.areAllPermissionsGranted()) {
-            Log.d(TAG, "All permissions already granted, completing onboarding")
+            Log.d(TAG, "تم منح جميع الصلاحيات بالفعل، إكمال الإعداد الأولي")
             completeOnboarding()
         } else {
-            Log.d(TAG, "Missing permissions, need to start explanation flow")
-            // The explanation screen will be shown by the calling activity
+            Log.d(TAG, "هناك صلاحيات مفقودة، يجب بدء تدفق الشرح")
+            // سيتم عرض شاشة الشرح بواسطة النشاط الذي يستدعي
         }
     }
 
     /**
-     * Called when user accepts the permission explanation
+     * يتم استدعاؤه عندما يقبل المستخدم شرح الصلاحيات
      */
     fun requestPermissions() {
-        Log.d(TAG, "User accepted permission explanation, requesting permissions")
+        Log.d(TAG, "قبل المستخدم شرح الصلاحيات، طلب الصلاحيات")
         
         val missingPermissions = permissionManager.getMissingPermissions()
         if (missingPermissions.isEmpty()) {
@@ -71,17 +71,17 @@ class OnboardingCoordinator(
             return
         }
 
-        Log.d(TAG, "Requesting ${missingPermissions.size} permissions")
+        Log.d(TAG, "طلب ${missingPermissions.size} صلاحيات")
         permissionLauncher?.launch(missingPermissions.toTypedArray())
     }
 
     /**
-     * Handle permission request results
+     * معالجة نتائج طلب الصلاحيات
      */
     private fun handlePermissionResults(permissions: Map<String, Boolean>) {
-        Log.d(TAG, "Received permission results:")
+        Log.d(TAG, "تم استلام نتائج الصلاحيات:")
         permissions.forEach { (permission, granted) ->
-            Log.d(TAG, "  $permission: ${if (granted) "GRANTED" else "DENIED"}")
+            Log.d(TAG, "  $permission: ${if (granted) "ممنوح" else "مرفوض"}")
         }
 
         val allGranted = permissions.values.all { it }
@@ -90,95 +90,94 @@ class OnboardingCoordinator(
 
         when {
             allGranted -> {
-                Log.d(TAG, "All permissions granted successfully")
+                Log.d(TAG, "تم منح جميع الصلاحيات بنجاح")
                 completeOnboarding()
             }
             criticalGranted -> {
-                Log.d(TAG, "Critical permissions granted, can proceed with limited functionality")
+                Log.d(TAG, "تم منح الصلاحيات الحرجة، يمكن المتابعة بوظائف محدودة")
                 showPartialPermissionWarning(permissions)
             }
             else -> {
-                Log.d(TAG, "Critical permissions denied")
+                Log.d(TAG, "تم رفض الصلاحيات الحرجة")
                 handlePermissionDenial(permissions)
             }
         }
     }
 
     /**
-     * Get the list of critical permissions that are absolutely required
+     * الحصول على قائمة الصلاحيات الحرجة المطلوبة تمامًا
      */
     private fun getCriticalPermissions(): List<String> {
-        // For bitchat, Bluetooth and location permissions are critical
-        // Notifications are nice-to-have but not critical
+        // بالنسبة لـ بلو للرسائل، صلاحيات البلوتوث والموقع حرجة
+        // صلاحيات الإشعارات جيدة ولكنها ليست حرجة
         return permissionManager.getRequiredPermissions().filter { permission ->
             !permission.contains("POST_NOTIFICATIONS")
         }
     }
 
     /**
-     * Show warning when some permissions are granted but others are denied
+     * عرض تحذير عند منح بعض الصلاحيات ورفض البعض الآخر
      */
     private fun showPartialPermissionWarning(permissions: Map<String, Boolean>) {
         val deniedPermissions = permissions.filter { !it.value }.keys
         val message = buildString {
-            append("Some permissions were denied:\n")
+            append("تم رفض بعض الصلاحيات:\n")
             deniedPermissions.forEach { permission ->
                 append("- ${getPermissionDisplayName(permission)}\n")
             }
-            append("\nbitchat may not work properly without all permissions.")
+            append("\nقد لا يعمل بلو للرسائل بشكل صحيح بدون جميع الصلاحيات.")
         }
         
-        Log.w(TAG, "Partial permissions granted: $message")
+        Log.w(TAG, "تم منح صلاحيات جزئية: $message")
         
-        // For now, we'll proceed anyway and let the user experience the limitations
-        // In a production app, you might want to show a dialog explaining the limitations
+        // للمتابعة رغم ذلك وترك المستخدم يواجه القيود
         completeOnboarding()
     }
 
     /**
-     * Handle permission denial scenarios
+     * معالجة سيناريوهات رفض الصلاحيات
      */
     private fun handlePermissionDenial(permissions: Map<String, Boolean>) {
         val deniedCritical = permissions.filter { !it.value && getCriticalPermissions().contains(it.key) }
         
         if (deniedCritical.isNotEmpty()) {
             val message = buildString {
-                append("Critical permissions were denied. bitchat requires these permissions to function:\n")
+                append("تم رفض الصلاحيات الحرجة. بلو للرسائل يحتاج هذه الصلاحيات للعمل:\n")
                 deniedCritical.keys.forEach { permission ->
                     append("- ${getPermissionDisplayName(permission)}\n")
                 }
-                append("\nPlease grant these permissions in Settings to use bitchat.")
+                append("\nالرجاء منح هذه الصلاحيات في الإعدادات لاستخدام بلو للرسائل.")
             }
             
-            Log.e(TAG, "Critical permissions denied: $deniedCritical")
+            Log.e(TAG, "تم رفض الصلاحيات الحرجة: $deniedCritical")
             onOnboardingFailed(message)
         } else {
-            // Shouldn't happen given our logic above, but handle gracefully
+            // يجب ألا يحدث بالنظر لمنطقنا أعلاه، ولكن التعامل معه بأمان
             completeOnboarding()
         }
     }
 
     /**
-     * Complete the onboarding process and initialize the app
+     * إكمال عملية الإعداد الأولي وتهيئة التطبيق
      */
     private fun completeOnboarding() {
-        Log.d(TAG, "Completing onboarding process")
+        Log.d(TAG, "إكمال عملية الإعداد الأولي")
         
-        // Mark onboarding as complete
+        // وضع علامة على اكتمال الإعداد الأولي
         permissionManager.markOnboardingComplete()
         
-        // Log final permission status
+        // تسجيل حالة الصلاحيات النهائية
         permissionManager.logPermissionStatus()
         
-        // Notify completion with a small delay to ensure everything is ready
+        // إعلام بالاكتمال مع تأخير بسيط لضمان جاهزية كل شيء
         activity.lifecycleScope.launch {
-            kotlinx.coroutines.delay(100) // Small delay for UI state to settle
+            kotlinx.coroutines.delay(100) // تأخير بسيط لتسوية حالة واجهة المستخدم
             onOnboardingComplete()
         }
     }
 
     /**
-     * Open app settings for manual permission management
+     * فتح إعدادات التطبيق للإدارة اليدوية للصلاحيات
      */
     fun openAppSettings() {
         try {
@@ -187,32 +186,32 @@ class OnboardingCoordinator(
                 addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
             }
             activity.startActivity(intent)
-            Log.d(TAG, "Opened app settings for manual permission management")
+            Log.d(TAG, "فتح إعدادات التطبيق للإدارة اليدوية للصلاحيات")
         } catch (e: Exception) {
-            Log.e(TAG, "Failed to open app settings", e)
+            Log.e(TAG, "فشل في فتح إعدادات التطبيق", e)
         }
     }
 
     /**
-     * Convert permission string to user-friendly display name
+     * تحويل نص الصلاحية إلى اسم سهل للمستخدم
      */
     private fun getPermissionDisplayName(permission: String): String {
         return when {
-            permission.contains("BLUETOOTH") -> "Bluetooth/Nearby Devices"
-            permission.contains("LOCATION") -> "Location (for Bluetooth scanning)"
-            permission.contains("NOTIFICATION") -> "Notifications"
+            permission.contains("BLUETOOTH") -> "البلوتوث/الأجهزة القريبة"
+            permission.contains("LOCATION") -> "الموقع (للبحث عن البلوتوث)"
+            permission.contains("NOTIFICATION") -> "الإشعارات"
             else -> permission.substringAfterLast(".")
         }
     }
 
     /**
-     * Get diagnostic information for troubleshooting
+     * الحصول على معلومات تشخيصية لاستكشاف الأخطاء
      */
     fun getDiagnostics(): String {
         return buildString {
-            appendLine("Onboarding Coordinator Diagnostics:")
-            appendLine("Activity: ${activity::class.simpleName}")
-            appendLine("Permission launcher: ${permissionLauncher != null}")
+            appendLine("تشخيص منسق الإعداد الأولي:")
+            appendLine("النشاط: ${activity::class.simpleName}")
+            appendLine("نافذة طلب الصلاحيات: ${permissionLauncher != null}")
             appendLine()
             append(permissionManager.getPermissionDiagnostics())
         }
