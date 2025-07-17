@@ -15,8 +15,8 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 
 /**
- * Permission explanation screen shown before requesting permissions
- * Explains why bitchat needs each permission and reassures users about privacy
+ * شاشة شرح الصلاحيات التي تظهر قبل طلب الأذونات
+ * تشرح سبب احتياج التطبيق لكل صلاحية وتطمئن المستخدمين حول الخصوصية
  */
 @Composable
 fun PermissionExplanationScreen(
@@ -34,17 +34,17 @@ fun PermissionExplanationScreen(
             .verticalScroll(scrollState),
         verticalArrangement = Arrangement.spacedBy(16.dp)
     ) {
-        // Header
+        // العنوان الرئيسي
         Column(
             modifier = Modifier.fillMaxWidth(),
             horizontalAlignment = Alignment.CenterHorizontally
         ) {
             Text(
-                text = "Welcome to bitchat*",
+                text = "مرحبًا بكم في بلو للرسائل",
                 style = MaterialTheme.typography.headlineMedium.copy(
                     fontFamily = FontFamily.Monospace,
                     fontWeight = FontWeight.Bold,
-                    color = colorScheme.primary
+                    color = Color(0xFF2196F3) // اللون الأزرق
                 ),
                 textAlign = TextAlign.Center
             )
@@ -52,7 +52,7 @@ fun PermissionExplanationScreen(
             Spacer(modifier = Modifier.height(8.dp))
             
             Text(
-                text = "Decentralized mesh messaging over Bluetooth",
+                text = "رسائل لاسلكية لامركزية عبر البلوتوث",
                 style = MaterialTheme.typography.bodyMedium.copy(
                     fontFamily = FontFamily.Monospace,
                     color = colorScheme.onSurface.copy(alpha = 0.7f)
@@ -63,7 +63,7 @@ fun PermissionExplanationScreen(
 
         Spacer(modifier = Modifier.height(16.dp))
 
-        // Privacy assurance section
+        // قسم تأكيد الخصوصية
         Card(
             modifier = Modifier.fillMaxWidth(),
             colors = CardDefaults.cardColors(
@@ -85,7 +85,7 @@ fun PermissionExplanationScreen(
                         modifier = Modifier.size(20.dp)
                     )
                     Text(
-                        text = "Your Privacy is Protected",
+                        text = "خصوصيتك محمية",
                         style = MaterialTheme.typography.titleSmall.copy(
                             fontWeight = FontWeight.Bold,
                             color = colorScheme.onSurface
@@ -94,10 +94,10 @@ fun PermissionExplanationScreen(
                 }
                 
                 Text(
-                    text = "• bitchat doesn't track you or collect personal data\n" +
-                            "• No servers, no internet required, no data logging\n" +
-                            "• Location permission is only used by Android for Bluetooth scanning\n" +
-                            "• Your messages stay on your device and peer devices only",
+                    text = "• بلو للرسائل لا يتتبعك أو يجمع بياناتك الشخصية\n" +
+                            "• لا يوجد سيرفرات، لا حاجة للإنترنت، لا تسجيل للبيانات\n" +
+                            "• صلاحية الموقع تستخدم فقط من قبل أندرويد لفحص البلوتوث\n" +
+                            "• رسائلك تبقى على جهازك وأجهزة الأقران فقط",
                     style = MaterialTheme.typography.bodySmall.copy(
                         fontFamily = FontFamily.Monospace,
                         color = colorScheme.onSurface.copy(alpha = 0.8f)
@@ -109,14 +109,14 @@ fun PermissionExplanationScreen(
         Spacer(modifier = Modifier.height(8.dp))
 
         Text(
-            text = "To work properly, bitchat needs these permissions:",
+            text = "لكي يعمل التطبيق بشكل صحيح، يحتاج إلى هذه الصلاحيات:",
             style = MaterialTheme.typography.bodyMedium.copy(
                 fontWeight = FontWeight.Medium,
                 color = colorScheme.onSurface
             )
         )
 
-        // Permission categories
+        // فئات الصلاحيات
         permissionCategories.forEach { category ->
             PermissionCategoryCard(
                 category = category,
@@ -126,7 +126,7 @@ fun PermissionExplanationScreen(
 
         Spacer(modifier = Modifier.height(16.dp))
 
-        // Action buttons
+        // أزرار الإجراءات
         Column(
             modifier = Modifier.fillMaxWidth(),
             verticalArrangement = Arrangement.spacedBy(12.dp)
@@ -135,11 +135,11 @@ fun PermissionExplanationScreen(
                 onClick = onContinue,
                 modifier = Modifier.fillMaxWidth(),
                 colors = ButtonDefaults.buttonColors(
-                    containerColor = colorScheme.primary
+                    containerColor = Color(0xFF2196F3) // اللون الأزرق
                 )
             ) {
                 Text(
-                    text = "Grant Permissions",
+                    text = "منح الصلاحيات",
                     style = MaterialTheme.typography.bodyMedium.copy(
                         fontFamily = FontFamily.Monospace,
                         fontWeight = FontWeight.Bold
@@ -156,7 +156,7 @@ fun PermissionExplanationScreen(
                 )
             ) {
                 Text(
-                    text = "Exit App",
+                    text = "خروج من التطبيق",
                     style = MaterialTheme.typography.bodyMedium.copy(
                         fontFamily = FontFamily.Monospace
                     ),
@@ -195,7 +195,12 @@ private fun PermissionCategoryCard(
                 )
                 
                 Text(
-                    text = category.name,
+                    text = when(category.name) {
+                        "Nearby Devices" -> "الأجهزة القريبة"
+                        "Precise Location" -> "الموقع الدقيق"
+                        "Notifications" -> "الإشعارات"
+                        else -> category.name
+                    },
                     style = MaterialTheme.typography.titleSmall.copy(
                         fontWeight = FontWeight.Bold,
                         color = colorScheme.onSurface
@@ -204,7 +209,12 @@ private fun PermissionCategoryCard(
             }
             
             Text(
-                text = category.description,
+                text = when(category.name) {
+                    "Nearby Devices" -> "للتواصل مع الأجهزة القريبة عبر البلوتوث بدون إنترنت"
+                    "Precise Location" -> "مطلوبة من أندرويد لاكتشاف الأجهزة القريبة عبر البلوتوث"
+                    "Notifications" -> "لإعلامك عند وصول رسائل جديدة"
+                    else -> category.description
+                },
                 style = MaterialTheme.typography.bodySmall.copy(
                     fontFamily = FontFamily.Monospace,
                     color = colorScheme.onSurface.copy(alpha = 0.8f),
@@ -213,7 +223,7 @@ private fun PermissionCategoryCard(
             )
 
             if (category.name == "Precise Location") {
-                // Extra emphasis for location permission
+                // تأكيد إضافي حول صلاحية الموقع
                 Row(
                     verticalAlignment = Alignment.CenterVertically,
                     horizontalArrangement = Arrangement.spacedBy(6.dp)
@@ -224,7 +234,7 @@ private fun PermissionCategoryCard(
                         modifier = Modifier.size(16.dp)
                     )
                     Text(
-                        text = "bitchat does NOT use GPS or track location",
+                        text = "بلو للرسائل لا يستخدم GPS ولا يتتبع موقعك",
                         style = MaterialTheme.typography.bodySmall.copy(
                             fontFamily = FontFamily.Monospace,
                             fontWeight = FontWeight.Medium,
@@ -248,9 +258,9 @@ private fun getPermissionEmoji(categoryName: String): String {
 
 private fun getPermissionIconColor(categoryName: String): Color {
     return when (categoryName) {
-        "Nearby Devices" -> Color(0xFF2196F3) // Blue
-        "Precise Location" -> Color(0xFFFF9800) // Orange
-        "Notifications" -> Color(0xFF4CAF50) // Green
-        else -> Color(0xFF9C27B0) // Purple
+        "Nearby Devices" -> Color(0xFF2196F3) // أزرق
+        "Precise Location" -> Color(0xFFFF9800) // برتقالي
+        "Notifications" -> Color(0xFF4CAF50) // أخضر
+        else -> Color(0xFF9C27B0) // بنفسجي
     }
 }
