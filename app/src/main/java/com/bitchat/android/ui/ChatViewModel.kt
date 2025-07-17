@@ -16,20 +16,20 @@ import java.util.*
 import kotlin.random.Random
 
 /**
- * ViewModel رئيسي لتطبيق بلو للرسائل
- * يدير جميع عمليات الدردشة والاتصال بين الأجهزة
+ * Refactored ChatViewModel - Main coordinator for bitchat functionality
+ * Delegates specific responsibilities to specialized managers while maintaining 100% iOS compatibility
  */
 class ChatViewModel(application: Application) : AndroidViewModel(application), BluetoothMeshDelegate {
     
     private val context: Context = application.applicationContext
     
-    // الخدمات الأساسية
+    // Core services
     val meshService = BluetoothMeshService(context)
     
-    // إدارة الحالة
+    // State management
     private val state = ChatState()
     
-    // المديرون المتخصصون
+    // Specialized managers
     private val dataManager = DataManager(context)
     private val messageManager = MessageManager(state)
     private val channelManager = ChannelManager(state, messageManager, dataManager, viewModelScope)
@@ -37,7 +37,7 @@ class ChatViewModel(application: Application) : AndroidViewModel(application), B
     private val commandProcessor = CommandProcessor(state, messageManager, channelManager, privateChatManager)
     private val notificationManager = NotificationManager(application.applicationContext)
     
-    // معالج تفويض اتصالات الشبكة
+    // Delegate handler for mesh callbacks
     private val meshDelegateHandler = MeshDelegateHandler(
         state = state,
         messageManager = messageManager,
@@ -49,7 +49,7 @@ class ChatViewModel(application: Application) : AndroidViewModel(application), B
         getMyPeerID = { meshService.myPeerID }
     )
     
-    // تعريض الحالة عبر LiveData
+    // Expose state through LiveData (maintaining the same interface)
     val messages: LiveData<List<BitchatMessage>> = state.messages
     val connectedPeers: LiveData<List<String>> = state.connectedPeers
     val nickname: LiveData<String> = state.nickname
@@ -77,16 +77,16 @@ class ChatViewModel(application: Application) : AndroidViewModel(application), B
     }
     
     private fun loadAndInitialize() {
-        // تحميل اسم المستخدم
+        // Load nickname
         val nickname = dataManager.loadNickname()
         state.setNickname(nickname)
         
-        // تحميل بيانات القنوات
+        // Load data
         val (joinedChannels, protectedChannels) = channelManager.loadChannelData()
         state.setJoinedChannels(joinedChannels)
         state.setPasswordProtectedChannels(protectedChannels)
         
-        // تهيئة رسائل القنوات
+        // Initialize channel messages
         joinedChannels.forEach { channel ->
             if (!state.getChannelMessagesValue().containsKey(channel)) {
                 val updatedChannelMessages = state.getChannelMessagesValue().toMutableMap()
@@ -95,21 +95,21 @@ class ChatViewModel(application: Application) : AndroidViewModel(application), B
             }
         }
         
-        // تحميل بيانات أخرى
+        // Load other data
         dataManager.loadFavorites()
         state.setFavoritePeers(dataManager.favoritePeers)
         dataManager.loadBlockedUsers()
         
-        // بدء خدمات الشبكة
+        // Start mesh service
         meshService.startServices()
         
-        // عرض رسالة ترحيبية إذا لم يكن هناك أقران متصلين
+        // Show welcome message if no peers after delay
         viewModelScope.launch {
             delay(3000)
             if (state.getConnectedPeersValue().isEmpty() && state.getMessagesValue().isEmpty()) {
                 val welcomeMessage = BitchatMessage(
                     sender = "system",
-                    content = "احصل على الأشخاص حولك لتنزيل بلو للرسائل... وتحدث معهم هنا!",
+                    content = "get people around you to download bitchat…and chat with them here!",
                     timestamp = Date(),
                     isRelay = false
                 )
@@ -123,7 +123,7 @@ class ChatViewModel(application: Application) : AndroidViewModel(application), B
         meshService.stopServices()
     }
     
-    // MARK: - إدارة اسم المستخدم
+    // MARK: - Nickname Management
     
     fun setNickname(newNickname: String) {
         state.setNickname(newNickname)
@@ -131,7 +131,7 @@ class ChatViewModel(application: Application) : AndroidViewModel(application), B
         meshService.sendBroadcastAnnounce()
     }
     
-    // MARK: - إدارة القنوات
+    // MARK: - Channel Management (delegated)
     
     fun joinChannel(channel: String, password: String? = null): Boolean {
         return channelManager.joinChannel(channel, password, meshService.myPeerID)
@@ -146,27 +146,30 @@ class ChatViewModel(application: Application) : AndroidViewModel(application), B
         meshService.sendMessage("left $channel")
     }
     
-    // MARK: - إدارة الدردشة الخاصة
+    // MARK: - Private Chat Management (delegated)
     
     fun startPrivateChat(peerID: String) {
         val success = privateChatManager.startPrivateChat(peerID, meshService)
         if (success) {
+            // Notify notification manager about current private chat
             setCurrentPrivateChatPeer(peerID)
+            // Clear notifications for this sender since user is now viewing the chat
             clearNotificationsForSender(peerID)
         }
     }
     
     fun endPrivateChat() {
         privateChatManager.endPrivateChat()
+        // Notify notification manager that no private chat is active
         setCurrentPrivateChatPeer(null)
     }
     
-    // MARK: - إرسال الرسائل
+    // MARK: - Message Sending
     
     fun sendMessage(content: String) {
         if (content.isEmpty()) return
         
-        // التحقق من الأوامر
+        // Check for commands
         if (content.startsWith("/")) {
             commandProcessor.processCommand(content, meshService, meshService.myPeerID) { messageContent, mentions, channel ->
                 meshService.sendMessage(messageContent, mentions, channel)
@@ -177,7 +180,7 @@ class ChatViewModel(application: Application) : AndroidViewModel(application), B
         val mentions = messageManager.parseMentions(content, meshService.getPeerNicknames().values.toSet(), state.getNicknameValue())
         val channels = messageManager.parseChannels(content)
         
-        // الانضمام التلقائي للقنوات المذكورة
+        // Auto-join mentioned channels
         channels.forEach { channel ->
             if (!state.getJoinedChannelsValue().contains(channel)) {
                 joinChannel(channel)
@@ -188,7 +191,7 @@ class ChatViewModel(application: Application) : AndroidViewModel(application), B
         val currentChannelValue = state.getCurrentChannelValue()
         
         if (selectedPeer != null) {
-            // إرسال رسالة خاصة
+            // Send private message
             val recipientNickname = meshService.getPeerNicknames()[selectedPeer]
             privateChatManager.sendPrivateMessage(
                 content, 
@@ -200,7 +203,7 @@ class ChatViewModel(application: Application) : AndroidViewModel(application), B
                 meshService.sendPrivateMessage(messageContent, peerID, recipientNicknameParam, messageId)
             }
         } else {
-            // إرسال رسالة عامة/قناة
+            // Send public/channel message
             val message = BitchatMessage(
                 sender = state.getNicknameValue() ?: meshService.myPeerID,
                 content = content,
@@ -214,7 +217,7 @@ class ChatViewModel(application: Application) : AndroidViewModel(application), B
             if (currentChannelValue != null) {
                 channelManager.addChannelMessage(currentChannelValue, message, meshService.myPeerID)
                 
-                // التحقق مما إذا كانت القناة مشفرة
+                // Check if encrypted channel
                 if (channelManager.hasChannelKey(currentChannelValue)) {
                     channelManager.sendEncryptedChannelMessage(
                         content, 
@@ -223,6 +226,7 @@ class ChatViewModel(application: Application) : AndroidViewModel(application), B
                         state.getNicknameValue(),
                         meshService.myPeerID,
                         onEncryptedPayload = { encryptedData ->
+                            // This would need proper mesh service integration
                             meshService.sendMessage(content, mentions, currentChannelValue)
                         },
                         onFallback = {
@@ -239,7 +243,7 @@ class ChatViewModel(application: Application) : AndroidViewModel(application), B
         }
     }
     
-    // MARK: - وظائف مساعدة
+    // MARK: - Utility Functions
     
     fun getPeerIDForNickname(nickname: String): String? {
         return meshService.getPeerNicknames().entries.find { it.value == nickname }?.key
@@ -253,7 +257,7 @@ class ChatViewModel(application: Application) : AndroidViewModel(application), B
         privateChatManager.registerPeerPublicKey(peerID, publicKeyData)
     }
     
-    // MARK: - تصحيح الأخطاء
+    // MARK: - Debug and Troubleshooting
     
     fun getDebugStatus(): String {
         return meshService.getDebugStatus()
@@ -268,19 +272,24 @@ class ChatViewModel(application: Application) : AndroidViewModel(application), B
     }
     
     fun setAppBackgroundState(inBackground: Boolean) {
+        // Forward to connection manager for power optimization
         meshService.connectionManager.setAppBackgroundState(inBackground)
+        
+        // Forward to notification manager for notification logic
         notificationManager.setAppBackgroundState(inBackground)
     }
     
     fun setCurrentPrivateChatPeer(peerID: String?) {
+        // Update notification manager with current private chat peer
         notificationManager.setCurrentPrivateChatPeer(peerID)
     }
     
     fun clearNotificationsForSender(peerID: String) {
+        // Clear notifications when user opens a chat
         notificationManager.clearNotificationsForSender(peerID)
     }
     
-    // MARK: - الإكمال التلقائي للأوامر
+    // MARK: - Command Autocomplete (delegated)
     
     fun updateCommandSuggestions(input: String) {
         commandProcessor.updateCommandSuggestions(input)
@@ -290,7 +299,7 @@ class ChatViewModel(application: Application) : AndroidViewModel(application), B
         return commandProcessor.selectCommandSuggestion(suggestion)
     }
     
-    // MARK: - تنفيذ BluetoothMeshDelegate
+    // MARK: - BluetoothMeshDelegate Implementation (delegated)
     
     override fun didReceiveMessage(message: BitchatMessage) {
         meshDelegateHandler.didReceiveMessage(message)
@@ -332,20 +341,24 @@ class ChatViewModel(application: Application) : AndroidViewModel(application), B
         return meshDelegateHandler.isFavorite(peerID)
     }
     
-    // MARK: - مسح الطوارئ
+    // MARK: - Emergency Clear
     
     fun panicClearAllData() {
+        // Clear all managers
         messageManager.clearAllMessages()
         channelManager.clearAllChannels()
         privateChatManager.clearAllPrivateChats()
         dataManager.clearAllData()
         
+        // Reset nickname
         val newNickname = "anon${Random.nextInt(1000, 9999)}"
         state.setNickname(newNickname)
         dataManager.saveNickname(newNickname)
         
+        // Disconnect from mesh
         meshService.stopServices()
         
+        // Restart services with new identity
         viewModelScope.launch {
             delay(500)
             meshService.startServices()
