@@ -37,14 +37,14 @@ import java.text.SimpleDateFormat
 import java.util.*
 
 /**
- * شاشة الدردشة الرئيسية - معاد تصميمها باستخدام هندسة مبنية على المكونات
- * تعمل الآن كمنسق ينظم المكونات التالية:
- * - رأس الدردشة: شريط التطبيق، التنقل، عداد الأقران
- * - مكونات الرسائل: عرض الرسائل وتنسيقها
- * - مكونات الإدخال: إدخال الرسائل واقتراحات الأوامر
- * - مكونات الشريط الجانبي: درج التنقل مع القنوات والأشخاص
- * - مكونات الحوارات: مطالبات كلمة المرور والنوافذ المنبثقة
- * - أدوات واجهة الدردشة: وظائف مساعدة للتنسيق والألوان
+ * Main ChatScreen - REFACTORED to use component-based architecture
+ * This is now a coordinator that orchestrates the following UI components:
+ * - ChatHeader: App bar, navigation, peer counter
+ * - MessageComponents: Message display and formatting
+ * - InputComponents: Message input and command suggestions
+ * - SidebarComponents: Navigation drawer with channels and people
+ * - DialogComponents: Password prompts and modals
+ * - ChatUIUtils: Utility functions for formatting and colors
  */
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -70,7 +70,7 @@ fun ChatScreen(viewModel: ChatViewModel) {
     var passwordInput by remember { mutableStateOf("") }
     var showAppInfo by remember { mutableStateOf(false) }
     
-    // عرض حوار كلمة المرور عند الحاجة
+    // Show password dialog when needed
     LaunchedEffect(showPasswordPrompt) {
         showPasswordDialog = showPasswordPrompt
     }
@@ -78,28 +78,28 @@ fun ChatScreen(viewModel: ChatViewModel) {
     val isConnected by viewModel.isConnected.observeAsState(false)
     val passwordPromptChannel by viewModel.passwordPromptChannel.observeAsState(null)
     
-    // تحديد الرسائل المراد عرضها
+    // Determine what messages to show
     val displayMessages = when {
         selectedPrivatePeer != null -> privateChats[selectedPrivatePeer] ?: emptyList()
         currentChannel != null -> channelMessages[currentChannel] ?: emptyList()
         else -> messages
     }
     
-    // استخدام WindowInsets للتعامل مع لوحة المفاتيح بشكل صحيح
+    // Use WindowInsets to handle keyboard properly
     BoxWithConstraints(modifier = Modifier.fillMaxSize()) {
         val headerHeight = 36.dp
         
-        // منطقة المحتوى الرئيسية التي تستجيب للوحة المفاتيح/إضافات النافذة
+        // Main content area that responds to keyboard/window insets
         Column(
             modifier = Modifier
                 .fillMaxSize()
                 .background(colorScheme.background)
-                .windowInsetsPadding(WindowInsets.ime) // يتعامل مع إضافات لوحة المفاتيح
+                .windowInsetsPadding(WindowInsets.ime) // This handles keyboard insets
         ) {
-            // مسافة الرأس - تخلق مساحة للرأس العائم
+            // Header spacer - creates space for the floating header
             Spacer(modifier = Modifier.height(headerHeight))
             
-            // منطقة الرسائل - تأخذ المساحة المتاحة، ستضغط عند ظهور لوحة المفاتيح
+            // Messages area - takes up available space, will compress when keyboard appears
             Box(modifier = Modifier.weight(1f)) {
                 MessagesList(
                     messages = displayMessages,
@@ -109,7 +109,7 @@ fun ChatScreen(viewModel: ChatViewModel) {
                 )
             }
             
-            // منطقة الإدخال - تبقى في الأسفل
+            // Input area - stays at bottom
             ChatInputSection(
                 messageText = messageText,
                 onMessageTextChange = { newText: String ->
@@ -134,7 +134,7 @@ fun ChatScreen(viewModel: ChatViewModel) {
             )
         }
         
-        // رأس عائم - يتم وضعه بشكل مطلق في الأعلى، يتجاهل لوحة المفاتيح
+        // Floating header - positioned absolutely at top, ignores keyboard
         ChatFloatingHeader(
             headerHeight = headerHeight,
             selectedPrivatePeer = selectedPrivatePeer,
@@ -147,7 +147,7 @@ fun ChatScreen(viewModel: ChatViewModel) {
             onPanicClear = { viewModel.panicClearAllData() }
         )
         
-        // غطاء الشريط الجانبي
+        // Sidebar overlay
         AnimatedVisibility(
             visible = showSidebar,
             enter = slideInHorizontally(
@@ -168,7 +168,7 @@ fun ChatScreen(viewModel: ChatViewModel) {
         }
     }
     
-    // الحوارات
+    // Dialogs
     ChatDialogs(
         showPasswordDialog = showPasswordDialog,
         passwordPromptChannel = passwordPromptChannel,
@@ -214,7 +214,7 @@ private fun ChatInputSection(
         Column {
             Divider(color = colorScheme.outline.copy(alpha = 0.3f))
             
-            // صندوق اقتراحات الأوامر
+            // Command suggestions box
             if (showCommandSuggestions && commandSuggestions.isNotEmpty()) {
                 CommandSuggestionsBox(
                     suggestions = commandSuggestions,
@@ -256,7 +256,7 @@ private fun ChatFloatingHeader(
             .fillMaxWidth()
             .height(headerHeight)
             .zIndex(1f)
-            .windowInsetsPadding(WindowInsets.statusBars), // يستجيب فقط لشريط الحالة
+            .windowInsetsPadding(WindowInsets.statusBars), // Only respond to status bar
         color = colorScheme.background.copy(alpha = 0.95f),
         shadowElevation = 8.dp
     ) {
@@ -284,7 +284,7 @@ private fun ChatFloatingHeader(
         )
     }
     
-    // فاصل أسفل الرأس
+    // Divider under header
     Divider(
         color = colorScheme.outline.copy(alpha = 0.3f),
         modifier = Modifier
@@ -305,7 +305,7 @@ private fun ChatDialogs(
     showAppInfo: Boolean,
     onAppInfoDismiss: () -> Unit
 ) {
-    // حوار كلمة المرور
+    // Password dialog
     PasswordPromptDialog(
         show = showPasswordDialog,
         channelName = passwordPromptChannel,
@@ -315,7 +315,7 @@ private fun ChatDialogs(
         onDismiss = onPasswordDismiss
     )
     
-    // حوار معلومات التطبيق
+    // App info dialog
     AppInfoDialog(
         show = showAppInfo,
         onDismiss = onAppInfoDismiss
