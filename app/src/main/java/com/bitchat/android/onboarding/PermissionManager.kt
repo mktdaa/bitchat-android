@@ -8,43 +8,43 @@ import android.util.Log
 import androidx.core.content.ContextCompat
 
 /**
- * Centralized permission management for bitchat app
- * Handles all Bluetooth and notification permissions required for the app to function
+ * إدارة مركزية لصلاحيات تطبيق بلو للرسائل
+ * يتعامل مع جميع صلاحيات البلوتوث والإشعارات المطلوبة لعمل التطبيق
  */
 class PermissionManager(private val context: Context) {
 
     companion object {
         private const val TAG = "PermissionManager"
-        private const val PREFS_NAME = "bitchat_permissions"
+        private const val PREFS_NAME = "bloo_permissions"
         private const val KEY_FIRST_TIME_COMPLETE = "first_time_onboarding_complete"
     }
 
     private val sharedPrefs = context.getSharedPreferences(PREFS_NAME, Context.MODE_PRIVATE)
 
     /**
-     * Check if this is the first time the user is launching the app
+     * التحقق مما إذا كانت هذه أول مرة يتم فيها تشغيل التطبيق
      */
     fun isFirstTimeLaunch(): Boolean {
         return !sharedPrefs.getBoolean(KEY_FIRST_TIME_COMPLETE, false)
     }
 
     /**
-     * Mark the first-time onboarding as complete
+     * وضع علامة على اكتمال عملية الإعداد الأولي
      */
     fun markOnboardingComplete() {
         sharedPrefs.edit()
             .putBoolean(KEY_FIRST_TIME_COMPLETE, true)
             .apply()
-        Log.d(TAG, "First-time onboarding marked as complete")
+        Log.d(TAG, "تم وضع علامة على اكتمال الإعداد الأولي")
     }
 
     /**
-     * Get all permissions required by the app
+     * الحصول على جميع الصلاحيات المطلوبة للتطبيق
      */
     fun getRequiredPermissions(): List<String> {
         val permissions = mutableListOf<String>()
 
-        // Bluetooth permissions (API level dependent)
+        // صلاحيات البلوتوث (تعتمد على مستوى واجهة برمجة التطبيقات)
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.S) {
             permissions.addAll(listOf(
                 Manifest.permission.BLUETOOTH_ADVERTISE,
@@ -58,13 +58,13 @@ class PermissionManager(private val context: Context) {
             ))
         }
 
-        // Location permissions (required for Bluetooth LE scanning)
+        // صلاحيات الموقع (مطلوبة لفحص البلوتوث منخفض الطاقة)
         permissions.addAll(listOf(
             Manifest.permission.ACCESS_COARSE_LOCATION,
             Manifest.permission.ACCESS_FINE_LOCATION
         ))
 
-        // Notification permission (Android 13+)
+        // صلاحية الإشعارات (أندرويد 13+)
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
             permissions.add(Manifest.permission.POST_NOTIFICATIONS)
         }
@@ -73,33 +73,33 @@ class PermissionManager(private val context: Context) {
     }
 
     /**
-     * Check if a specific permission is granted
+     * التحقق مما إذا كانت صلاحية معينة ممنوحة
      */
     fun isPermissionGranted(permission: String): Boolean {
         return ContextCompat.checkSelfPermission(context, permission) == PackageManager.PERMISSION_GRANTED
     }
 
     /**
-     * Check if all required permissions are granted
+     * التحقق مما إذا كانت جميع الصلاحيات المطلوبة ممنوحة
      */
     fun areAllPermissionsGranted(): Boolean {
         return getRequiredPermissions().all { isPermissionGranted(it) }
     }
 
     /**
-     * Get the list of permissions that are missing
+     * الحصول على قائمة الصلاحيات المفقودة
      */
     fun getMissingPermissions(): List<String> {
         return getRequiredPermissions().filter { !isPermissionGranted(it) }
     }
 
     /**
-     * Get categorized permission information for display
+     * الحصول على معلومات الصلاحيات المصنفة للعرض
      */
     fun getCategorizedPermissions(): List<PermissionCategory> {
         val categories = mutableListOf<PermissionCategory>()
 
-        // Bluetooth/Nearby Devices category
+        // فئة البلوتوث/الأجهزة القريبة
         val bluetoothPermissions = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.S) {
             listOf(
                 Manifest.permission.BLUETOOTH_ADVERTISE,
@@ -115,15 +115,15 @@ class PermissionManager(private val context: Context) {
 
         categories.add(
             PermissionCategory(
-                name = "Nearby Devices",
-                description = "Required to discover and connect to other bitchat users via Bluetooth",
+                name = "الأجهزة القريبة",
+                description = "مطلوبة لاكتشاف والتواصل مع مستخدمي بلو للرسائل عبر البلوتوث",
                 permissions = bluetoothPermissions,
                 isGranted = bluetoothPermissions.all { isPermissionGranted(it) },
-                systemDescription = "Allow bitchat to connect to nearby devices"
+                systemDescription = "السماح لبلو للرسائل بالاتصال بالأجهزة القريبة"
             )
         )
 
-        // Location category
+        // فئة الموقع
         val locationPermissions = listOf(
             Manifest.permission.ACCESS_COARSE_LOCATION,
             Manifest.permission.ACCESS_FINE_LOCATION
@@ -131,23 +131,23 @@ class PermissionManager(private val context: Context) {
 
         categories.add(
             PermissionCategory(
-                name = "Precise Location",
-                description = "Required by Android for Bluetooth scanning.",
+                name = "الموقع الدقيق",
+                description = "مطلوب بواسطة أندرويد لفحص البلوتوث",
                 permissions = locationPermissions,
                 isGranted = locationPermissions.all { isPermissionGranted(it) },
-                systemDescription = "Allow bitchat to access this device's location"
+                systemDescription = "السماح لبلو للرسائل بالوصول إلى موقع الجهاز"
             )
         )
 
-        // Notifications category (if applicable)
+        // فئة الإشعارات (إذا كانت مطبقة)
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
             categories.add(
                 PermissionCategory(
-                    name = "Notifications",
-                    description = "Show notifications when you receive private messages while the app is in background",
+                    name = "الإشعارات",
+                    description = "عرض الإشعارات عند استلام رسائل خاصة أثناء وجود التطبيق في الخلفية",
                     permissions = listOf(Manifest.permission.POST_NOTIFICATIONS),
                     isGranted = isPermissionGranted(Manifest.permission.POST_NOTIFICATIONS),
-                    systemDescription = "Allow bitchat to send you notifications"
+                    systemDescription = "السماح لبلو للرسائل بإرسال الإشعارات لك"
                 )
             )
         }
@@ -156,18 +156,18 @@ class PermissionManager(private val context: Context) {
     }
 
     /**
-     * Get detailed diagnostic information about permission status
+     * الحصول على معلومات تشخيصية مفصلة حول حالة الصلاحيات
      */
     fun getPermissionDiagnostics(): String {
         return buildString {
-            appendLine("Permission Diagnostics:")
-            appendLine("Android SDK: ${Build.VERSION.SDK_INT}")
-            appendLine("First time launch: ${isFirstTimeLaunch()}")
-            appendLine("All permissions granted: ${areAllPermissionsGranted()}")
+            appendLine("تشخيص الصلاحيات:")
+            appendLine("إصدار أندرويد: ${Build.VERSION.SDK_INT}")
+            appendLine("أول تشغيل: ${isFirstTimeLaunch()}")
+            appendLine("جميع الصلاحيات ممنوحة: ${areAllPermissionsGranted()}")
             appendLine()
             
             getCategorizedPermissions().forEach { category ->
-                appendLine("${category.name}: ${if (category.isGranted) "✅ GRANTED" else "❌ MISSING"}")
+                appendLine("${category.name}: ${if (category.isGranted) "✅ ممنوحة" else "❌ مفقودة"}")
                 category.permissions.forEach { permission ->
                     val granted = isPermissionGranted(permission)
                     appendLine("  - ${permission.substringAfterLast(".")}: ${if (granted) "✅" else "❌"}")
@@ -177,7 +177,7 @@ class PermissionManager(private val context: Context) {
             
             val missing = getMissingPermissions()
             if (missing.isNotEmpty()) {
-                appendLine("Missing permissions:")
+                appendLine("الصلاحيات المفقودة:")
                 missing.forEach { permission ->
                     appendLine("- $permission")
                 }
@@ -186,7 +186,7 @@ class PermissionManager(private val context: Context) {
     }
 
     /**
-     * Log permission status for debugging
+     * تسجيل حالة الصلاحيات لأغراض التصحيح
      */
     fun logPermissionStatus() {
         Log.d(TAG, getPermissionDiagnostics())
@@ -194,7 +194,7 @@ class PermissionManager(private val context: Context) {
 }
 
 /**
- * Data class representing a category of related permissions
+ * فئة بيانات تمثل فئة من الصلاحيات ذات الصلة
  */
 data class PermissionCategory(
     val name: String,
