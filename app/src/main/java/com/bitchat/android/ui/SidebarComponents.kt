@@ -137,7 +137,7 @@ private fun SidebarHeader() {
         verticalAlignment = Alignment.CenterVertically
     ) {
         Text(
-            text = "YOUR NETWORK",
+            text = "شبكتك",
             style = MaterialTheme.typography.titleMedium.copy(
                 fontWeight = FontWeight.Bold,
                 fontFamily = FontFamily.Monospace
