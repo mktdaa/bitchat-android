@@ -29,7 +29,7 @@ fun PasswordPromptDialog(
             onDismissRequest = onDismiss,
             title = {
                 Text(
-                    text = "Enter Channel Password",
+                    text = "ادخل كلمة سر القناة",
                     style = MaterialTheme.typography.titleMedium,
                     color = colorScheme.onSurface
                 )
@@ -37,7 +37,7 @@ fun PasswordPromptDialog(
             text = {
                 Column {
                     Text(
-                        text = "Channel $channelName is password protected. Enter the password to join.",
+                        text = "Channel $channelName is password protected. ادخل كلمة السر للانضمام.",
                         style = MaterialTheme.typography.bodyMedium,
                         color = colorScheme.onSurface
                     )
@@ -46,7 +46,7 @@ fun PasswordPromptDialog(
                     OutlinedTextField(
                         value = passwordInput,
                         onValueChange = onPasswordChange,
-                        label = { Text("Password", style = MaterialTheme.typography.bodyMedium) },
+                        label = { Text("كلمة السر", style = MaterialTheme.typography.bodyMedium) },
                         textStyle = MaterialTheme.typography.bodyMedium.copy(
                             fontFamily = FontFamily.Monospace
                         ),
@@ -60,7 +60,7 @@ fun PasswordPromptDialog(
             confirmButton = {
                 TextButton(onClick = onConfirm) {
                     Text(
-                        text = "Join",
+                        text = "انضمام",
                         style = MaterialTheme.typography.bodyMedium,
                         color = colorScheme.primary
                     )
@@ -69,7 +69,7 @@ fun PasswordPromptDialog(
             dismissButton = {
                 TextButton(onClick = onDismiss) {
                     Text(
-                        text = "Cancel",
+                        text = "الغاء",
                         style = MaterialTheme.typography.bodyMedium,
                         color = colorScheme.onSurface
                     )
@@ -93,19 +93,19 @@ fun AppInfoDialog(
             onDismissRequest = onDismiss,
             title = {
                 Text(
-                    text = "About bitchat*",
+                    text = "بلو للرسائل",
                     style = MaterialTheme.typography.titleMedium,
                     color = colorScheme.onSurface
                 )
             },
             text = {
                 Text(
-                    text = "Decentralized mesh messaging over Bluetooth LE\n\n" +
-                            "• No servers or internet required\n" +
-                            "• End-to-end encrypted private messages\n" +
-                            "• Password-protected channels\n" +
-                            "• Store-and-forward for offline peers\n\n" +
-                            "Triple-click title to emergency clear all data",
+                    text = "رسائل لاسلكية لا مركزية عبر بلوتوث منخفض الطاقة\n\n" +
+                            "• لا حاجة لخوادم أو اتصال بالإنترنت\n" +
+                            "• رسائل خاصة مشفرة من الطرف للطرف\n" +
+                            "• قنوات محمية بكلمة مرور\n" +
+                            "• إمكانية التخزين وإعادة الإرسال للأجهزة غير المتصلة\n\n" +
+                            "اضغط ثلاث مرات على العنوان لمسح جميع البيانات في حالات الطوارئ",
                     style = MaterialTheme.typography.bodyMedium,
                     color = colorScheme.onSurface
                 )
@@ -113,7 +113,7 @@ fun AppInfoDialog(
             confirmButton = {
                 TextButton(onClick = onDismiss) {
                     Text(
-                        text = "OK",
+                        text = "موافق",
                         style = MaterialTheme.typography.bodyMedium,
                         color = colorScheme.primary
                     )
