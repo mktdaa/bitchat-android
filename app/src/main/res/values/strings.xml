@@ -1,19 +1,18 @@
-<?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <string name="app_name">Bluessom</string>
-    <string name="permission_bluetooth_rationale">Bluetooth permission is required for peer-to-peer messaging without internet.</string>
-    <string name="permission_location_rationale">Location permission is required to discover nearby devices via Bluetooth.</string>
-    <string name="permission_notification_rationale">Notification permission is required to alert you of new messages.</string>
-    <string name="nickname_hint">nickname</string>
-    <string name="message_hint">type a message…</string>
-    <string name="channel_password_hint">Password</string>
-    <string name="join_channel">Join Channel</string>
-    <string name="leave_channel">Leave</string>
-    <string name="send_message">Send</string>
-    <string name="back">Back</string>
-    <string name="people">People</string>
-    <string name="channels">Channels</string>
-    <string name="online_users">Online Users</string>
-    <string name="no_one_connected">No one connected</string>
-    <string name="emergency_clear_hint">Triple tap to clear all data</string>
+    <string name="app_name">بلو للمراسلة</string>
+    <string name="permission_bluetooth_rationale">يتطلب التطبيق إذن البلوتوث للمراسلة من نظير إلى نظير بدون إنترنت.</string>
+    <string name="permission_location_rationale">يتطلب التطبيق إذن الموقع لاكتشاف الأجهزة القريبة عبر البلوتوث.</string>
+    <string name="permission_notification_rationale">يتطلب التطبيق إذن الإشعارات لتنبيهك بالرسائل الجديدة.</string>
+    <string name="nickname_hint">الاسم المستعار</string>
+    <string name="message_hint">اكتب رسالة…</string>
+    <string name="channel_password_hint">كلمة المرور</string>
+    <string name="join_channel">انضم إلى القناة</string>
+    <string name="leave_channel">مغادرة</string>
+    <string name="send_message">إرسال</string>
+    <string name="back">رجوع</string>
+    <string name="people">الأشخاص</string>
+    <string name="channels">القنوات</string>
+    <string name="online_users">المستخدمون المتصلون</string>
+    <string name="no_one_connected">لا أحد متصل</string>
+    <string name="emergency_clear_hint">انقر ثلاث مرات لمسح جميع البيانات</string>
 </resources>
