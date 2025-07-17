@@ -125,7 +125,7 @@ fun PeerCounter(
         
         if (joinedChannels.isNotEmpty()) {
             Text(
-                text = " · ⧉ ${joinedChannels.size}",
+                        text = " · القنوات: ${joinedChannels.size}",
                 style = MaterialTheme.typography.bodyMedium,
                 color = if (isConnected) Color(0xFF00C851) else Color.Red,
                 fontSize = 16.sp,
