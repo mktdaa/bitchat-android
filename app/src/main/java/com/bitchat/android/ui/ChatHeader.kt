@@ -342,7 +342,7 @@ private fun MainHeader(
             Text(
                 text = "بلو للرسائل",
                 style = MaterialTheme.typography.headlineSmall,
-                color = colorScheme.primary,
+                color = Color(0xFF0080FF), // ازرق
                 modifier = Modifier.clickable { onTitleClick() }
             )
             
