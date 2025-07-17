@@ -28,8 +28,8 @@ import java.text.SimpleDateFormat
 import java.util.*
 
 /**
- * Message display components for ChatScreen
- * Extracted from ChatScreen.kt for better organization
+ * مكونات عرض الرسائل لشاشة الدردشة
+ * تم استخراجها من ChatScreen.kt لتنظيم أفضل
  */
 
 @Composable
@@ -41,7 +41,7 @@ fun MessagesList(
 ) {
     val listState = rememberLazyListState()
     
-    // Auto-scroll to bottom when new messages arrive
+    // التمرير التلقائي للأسفل عند وصول رسائل جديدة
     LaunchedEffect(messages.size) {
         if (messages.isNotEmpty()) {
             listState.animateScrollToItem(messages.size - 1)
@@ -78,7 +78,7 @@ fun MessageItem(
         horizontalArrangement = Arrangement.SpaceBetween,
         verticalAlignment = Alignment.Top
     ) {
-        // Single text view for natural wrapping (like iOS)
+        // عرض نص واحد للالتفاف الطبيعي (مثل iOS)
         Text(
             text = formatMessageAsAnnotatedString(
                 message = message,
@@ -94,15 +94,15 @@ fun MessageItem(
         )
         
         Row(verticalAlignment = Alignment.CenterVertically) {
-            // Copy button for all messages
+            // زر النسخ لجميع الرسائل
             CopyButton(onClick = {
                 val clipboard = context.getSystemService(Context.CLIPBOARD_SERVICE) as ClipboardManager
                 val clip = ClipData.newPlainText("message", message.content)
                 clipboard.setPrimaryClip(clip)
-                Toast.makeText(context, "Copied to clipboard", Toast.LENGTH_SHORT).show()
+                Toast.makeText(context, "تم النسخ إلى الحافظة", Toast.LENGTH_SHORT).show()
             })
             
-            // Delivery status for private messages
+            // حالة التسليم للرسائل الخاصة
             if (message.isPrivate && message.sender == currentUserNickname) {
                 Spacer(modifier = Modifier.width(4.dp))
                 message.deliveryStatus?.let { status ->
@@ -121,7 +121,7 @@ fun CopyButton(onClick: () -> Unit) {
     ) {
         Icon(
             imageVector = Icons.Default.ContentCopy,
-            contentDescription = "Copy message",
+            contentDescription = "نسخ الرسالة",
             tint = MaterialTheme.colorScheme.onSurface.copy(alpha = 0.6f),
             modifier = Modifier.size(16.dp)
         )
@@ -158,7 +158,7 @@ fun DeliveryStatusIcon(status: DeliveryStatus) {
             Text(
                 text = "✓✓",
                 fontSize = 10.sp,
-                color = Color(0xFF007AFF), // Blue
+                color = Color(0xFF007AFF), // أزرق
                 fontWeight = FontWeight.Bold
             )
         }
