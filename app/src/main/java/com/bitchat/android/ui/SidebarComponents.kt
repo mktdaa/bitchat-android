@@ -243,7 +243,7 @@ fun PeopleSection(
             )
             Spacer(modifier = Modifier.width(6.dp))
             Text(
-                text = "PEOPLE",
+                text = "الاشخاص",
                 style = MaterialTheme.typography.labelSmall,
                 color = colorScheme.onSurface.copy(alpha = 0.6f),
                 fontWeight = FontWeight.Bold
@@ -252,7 +252,7 @@ fun PeopleSection(
         
         if (connectedPeers.isEmpty()) {
             Text(
-                text = "No one connected",
+                text = "لا احد متصل",
                 style = MaterialTheme.typography.bodyMedium,
                 color = colorScheme.onSurface.copy(alpha = 0.5f),
                 modifier = Modifier.padding(horizontal = 24.dp, vertical = 8.dp)
