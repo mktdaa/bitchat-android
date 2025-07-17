@@ -1,18 +1,13 @@
 <resources>
-    <string name="app_name">بلو للمراسلة</string>
-    <string name="permission_bluetooth_rationale">يتطلب التطبيق إذن البلوتوث للمراسلة من نظير إلى نظير بدون إنترنت.</string>
-    <string name="permission_location_rationale">يتطلب التطبيق إذن الموقع لاكتشاف الأجهزة القريبة عبر البلوتوث.</string>
-    <string name="permission_notification_rationale">يتطلب التطبيق إذن الإشعارات لتنبيهك بالرسائل الجديدة.</string>
-    <string name="nickname_hint">الاسم المستعار</string>
-    <string name="message_hint">اكتب رسالة…</string>
-    <string name="channel_password_hint">كلمة المرور</string>
-    <string name="join_channel">انضم إلى القناة</string>
-    <string name="leave_channel">مغادرة</string>
-    <string name="send_message">إرسال</string>
-    <string name="back">رجوع</string>
-    <string name="people">الأشخاص</string>
-    <string name="channels">القنوات</string>
-    <string name="online_users">المستخدمون المتصلون</string>
-    <string name="no_one_connected">لا أحد متصل</string>
-    <string name="emergency_clear_hint">انقر ثلاث مرات لمسح جميع البيانات</string>
+    <string name="app_name">بلو للرسائل</string>
+    <string name="welcome_title">مرحباً بك في بلو</string>
+    <string name="welcome_desc">تطبيق رسائل عبر البلوتوث بدون إنترنت</string>
+    <string name="privacy_title">خصوصيتك محمية 🔒</string>
+    <string name="privacy_desc">بلو لا يتتبعك أو يجمع بياناتك الشخصية. لا يوجد خوادم، لا إنترنت، لا تسجيل بيانات.</string>
+    <string name="permissions_title">لتعمل بلو بشكل صحيح، يحتاج إلى الأذونات التالية:</string>
+    <string name="perm_nearby_devices">الأجهزة القريبة 📱</string>
+    <string name="perm_nearby_desc">مطلوب لاكتشاف والاتصال بالمستخدمين الآخرين عبر البلوتوث.</string>
+    <string name="perm_location">الموقع الدقيق 📍</string>
+    <string name="perm_location_desc">مطلوب من نظام أندرويد لفحص البلوتوث. بلو لا يستخدم GPS أو يتتبع موقعك.</string>
+    <string name="perm_notifications">الإشعارات 🔔</string>
 </resources>
