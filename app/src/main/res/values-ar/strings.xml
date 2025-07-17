@@ -1,0 +1,18 @@
+<resources>
+    <string name="app_name">بلو للرسائل</string>
+    <string name="permission_bluetooth_rationale">يتطلب إذن بلوتوث للمراسلة بدون إنترنت.</string>
+    <string name="permission_location_rationale">يتطلب إذن الموقع لاكتشاف الأجهزة القريبة.</string>
+    <string name="permission_notification_rationale">يتطلب إذن الإشعارات لتنبيهك برسائل جديدة.</string>
+    <string name="nickname_hint">الاسم المستعار</string>
+    <string name="message_hint">اكتب رسالة…</string>
+    <string name="channel_password_hint">كلمة المرور</string>
+    <string name="join_channel">انضم إلى القناة</string>
+    <string name="leave_channel">مغادرة</string>
+    <string name="send_message">إرسال</string>
+    <string name="back">رجوع</string>
+    <string name="people">الأشخاص</string>
+    <string name="channels">القنوات</string>
+    <string name="online_users">المستخدمون المتصلون</string>
+    <string name="no_one_connected">لا أحد متصل</string>
+    <string name="emergency_clear_hint">انقر ثلاث مرات لمسح كل البيانات</string>
+</resources>
