@@ -10,8 +10,8 @@ import androidx.activity.result.ActivityResultLauncher
 import androidx.activity.result.contract.ActivityResultContracts
 
 /**
- * Manages Bluetooth enable/disable state and user prompts
- * Checks Bluetooth status on every app startup
+ * يدير حالة تفعيل/تعطيل البلوتوث وطلبات المستخدم
+ * يتحقق من حالة البلوتوث عند كل تشغيل للتطبيق
  */
 class BluetoothStatusManager(
     private val activity: ComponentActivity,
@@ -33,172 +33,172 @@ class BluetoothStatusManager(
     }
 
     /**
-     * Setup Bluetooth adapter reference
+     * إعداد محول البلوتوث
      */
     private fun setupBluetoothAdapter() {
         try {
             val bluetoothManager = context.getSystemService(Context.BLUETOOTH_SERVICE) as BluetoothManager
             bluetoothAdapter = bluetoothManager.adapter
-            Log.d(TAG, "Bluetooth adapter initialized: ${bluetoothAdapter != null}")
+            Log.d(TAG, "تم تهيئة محول البلوتوث: ${bluetoothAdapter != null}")
         } catch (e: Exception) {
-            Log.e(TAG, "Failed to initialize Bluetooth adapter", e)
+            Log.e(TAG, "فشل في تهيئة محول البلوتوث", e)
             bluetoothAdapter = null
         }
     }
 
     /**
-     * Setup launcher for Bluetooth enable request
+     * إعداد النافذة لطلب تفعيل البلوتوث
      */
     private fun setupBluetoothEnableLauncher() {
         bluetoothEnableLauncher = activity.registerForActivityResult(
             ActivityResultContracts.StartActivityForResult()
         ) { result ->
             val isEnabled = bluetoothAdapter?.isEnabled == true
-            Log.d(TAG, "Bluetooth enable request result: $isEnabled (result code: ${result.resultCode})")
+            Log.d(TAG, "نتيجة طلب تفعيل البلوتوث: $isEnabled (رمز النتيجة: ${result.resultCode})")
             if (isEnabled) {
                 onBluetoothEnabled()
             } else {
-                onBluetoothDisabled("Bluetooth is required for bitchat to discover and connect to nearby users. Please enable Bluetooth to continue.")
+                onBluetoothDisabled("البلوتوث مطلوب لبرنامج بلو للرسائل لاكتشاف والتواصل مع المستخدمين القريبين. يرجى تفعيل البلوتوث للمتابعة.")
             }
         }
     }
 
     /**
-     * Check if Bluetooth is supported on this device
+     * التحقق مما إذا كان البلوتوث مدعومًا على هذا الجهاز
      */
     fun isBluetoothSupported(): Boolean {
         return bluetoothAdapter != null
     }
 
     /**
-     * Check if Bluetooth is currently enabled (permission-safe)
+     * التحقق مما إذا كان البلوتوث مفعلاً حالياً (مع مراعاة الصلاحيات)
      */
     fun isBluetoothEnabled(): Boolean {
         return try {
             bluetoothAdapter?.isEnabled == true
         } catch (securityException: SecurityException) {
-            // If we can't check due to permissions, assume disabled
-            Log.w(TAG, "Cannot check Bluetooth enabled state due to missing permissions")
+            // إذا لم نتمكن من التحقق بسبب الصلاحيات، نفترض أنه معطل
+            Log.w(TAG, "لا يمكن التحقق من حالة البلوتوث بسبب نقص الصلاحيات")
             false
         } catch (e: Exception) {
-            Log.w(TAG, "Error checking Bluetooth enabled state: ${e.message}")
+            Log.w(TAG, "خطأ في التحقق من حالة البلوتوث: ${e.message}")
             false
         }
     }
 
     /**
-     * Check Bluetooth status and handle accordingly (permission-safe)
-     * This should be called on every app startup
+     * التحقق من حالة البلوتوث والتعامل معها (مع مراعاة الصلاحيات)
+     * يجب استدعاء هذه الوظيفة عند كل تشغيل للتطبيق
      */
     fun checkBluetoothStatus(): BluetoothStatus {
-        Log.d(TAG, "Checking Bluetooth status")
+        Log.d(TAG, "جارٍ التحقق من حالة البلوتوث")
         
         return when {
             bluetoothAdapter == null -> {
-                Log.e(TAG, "Bluetooth not supported on this device")
+                Log.e(TAG, "البلوتوث غير مدعوم على هذا الجهاز")
                 BluetoothStatus.NOT_SUPPORTED
             }
             !isBluetoothEnabled() -> {
-                Log.w(TAG, "Bluetooth is disabled or cannot be checked")
+                Log.w(TAG, "البلوتوث معطل أو لا يمكن التحقق منه")
                 BluetoothStatus.DISABLED
             }
             else -> {
-                Log.d(TAG, "Bluetooth is enabled and ready")
+                Log.d(TAG, "البلوتوث مفعّل وجاهز")
                 BluetoothStatus.ENABLED
             }
         }
     }
 
     /**
-     * Request user to enable Bluetooth (permission-aware)
+     * طلب تفعيل البلوتوث من المستخدم (مع مراعاة الصلاحيات)
      */
     fun requestEnableBluetooth() {
-        Log.d(TAG, "Requesting user to enable Bluetooth")
+        Log.d(TAG, "طلب تفعيل البلوتوث من المستخدم")
         
         try {
             val enableBluetoothIntent = Intent(BluetoothAdapter.ACTION_REQUEST_ENABLE)
             bluetoothEnableLauncher?.launch(enableBluetoothIntent)
         } catch (securityException: SecurityException) {
-            // Permission not granted yet - this is expected during onboarding
-            Log.w(TAG, "Cannot request Bluetooth enable due to missing BLUETOOTH_CONNECT permission")
-            onBluetoothDisabled("Bluetooth permissions are required before enabling Bluetooth. Please grant permissions first.")
+            // الصلاحية غير ممنوحة بعد - هذا متوقع أثناء عملية الإعداد الأولي
+            Log.w(TAG, "لا يمكن طلب تفعيل البلوتوث بسبب نقص صلاحية BLUETOOTH_CONNECT")
+            onBluetoothDisabled("صلاحيات البلوتوث مطلوبة قبل التفعيل. يرجى منح الصلاحيات أولاً.")
         } catch (e: Exception) {
-            Log.e(TAG, "Failed to request Bluetooth enable", e)
-            onBluetoothDisabled("Failed to request Bluetooth enable: ${e.message}")
+            Log.e(TAG, "فشل في طلب تفعيل البلوتوث", e)
+            onBluetoothDisabled("فشل في طلب تفعيل البلوتوث: ${e.message}")
         }
     }
 
     /**
-     * Handle Bluetooth status check result
+     * التعامل مع نتيجة التحقق من حالة البلوتوث
      */
     fun handleBluetoothStatus(status: BluetoothStatus) {
         when (status) {
             BluetoothStatus.ENABLED -> {
-                Log.d(TAG, "Bluetooth is enabled, proceeding")
+                Log.d(TAG, "البلوتوث مفعّل، جارٍ المتابعة")
                 onBluetoothEnabled()
             }
             BluetoothStatus.DISABLED -> {
-                Log.d(TAG, "Bluetooth is disabled, requesting enable")
+                Log.d(TAG, "البلوتوث معطل، جارٍ طلب التفعيل")
                 requestEnableBluetooth()
             }
             BluetoothStatus.NOT_SUPPORTED -> {
-                Log.e(TAG, "Bluetooth not supported")
-                onBluetoothDisabled("This device doesn't support Bluetooth, which is required for bitchat to function.")
+                Log.e(TAG, "البلوتوث غير مدعوم")
+                onBluetoothDisabled("هذا الجهاز لا يدعم البلوتوث، وهو مطلوب لعمل برنامج بلو للرسائل.")
             }
         }
     }
 
     /**
-     * Get user-friendly status message
+     * الحصول على رسالة حالة سهلة الفهم للمستخدم
      */
     fun getStatusMessage(status: BluetoothStatus): String {
         return when (status) {
-            BluetoothStatus.ENABLED -> "Bluetooth is enabled and ready"
-            BluetoothStatus.DISABLED -> "Bluetooth is disabled. Please enable Bluetooth to use bitchat."
-            BluetoothStatus.NOT_SUPPORTED -> "This device doesn't support Bluetooth."
+            BluetoothStatus.ENABLED -> "البلوتوث مفعّل وجاهز للاستخدام"
+            BluetoothStatus.DISABLED -> "البلوتوث معطل. يرجى تفعيل البلوتوث لاستخدام بلو للرسائل."
+            BluetoothStatus.NOT_SUPPORTED -> "هذا الجهاز لا يدعم البلوتوث."
         }
     }
 
     /**
-     * Get detailed diagnostics (permission-safe)
+     * الحصول على تشخيص مفصل (مع مراعاة الصلاحيات)
      */
     fun getDiagnostics(): String {
         return buildString {
-            appendLine("Bluetooth Status Diagnostics:")
-            appendLine("Adapter available: ${bluetoothAdapter != null}")
-            appendLine("Bluetooth supported: ${isBluetoothSupported()}")
-            appendLine("Bluetooth enabled: ${isBluetoothEnabled()}")
-            appendLine("Current status: ${checkBluetoothStatus()}")
+            appendLine("تشخيص حالة البلوتوث:")
+            appendLine("المحول متاح: ${bluetoothAdapter != null}")
+            appendLine("البلوتوث مدعوم: ${isBluetoothSupported()}")
+            appendLine("البلوتوث مفعّل: ${isBluetoothEnabled()}")
+            appendLine("الحالة الحالية: ${checkBluetoothStatus()}")
             
-            // Only access adapter details if we have permission and adapter is available
+            // الوصول إلى تفاصيل المحول فقط إذا كانت الصلاحية متاحة والمحول متاح
             bluetoothAdapter?.let { adapter ->
                 try {
-                    // These calls require BLUETOOTH_CONNECT permission on Android 12+
-                    appendLine("Adapter name: ${adapter.name ?: "Unknown"}")
-                    appendLine("Adapter address: ${adapter.address ?: "Unknown"}")
+                    // هذه الاستدعاءات تتطلب صلاحية BLUETOOTH_CONNECT على أندرويد 12+
+                    appendLine("اسم المحول: ${adapter.name ?: "غير معروف"}")
+                    appendLine("عنوان المحول: ${adapter.address ?: "غير معروف"}")
                 } catch (securityException: SecurityException) {
-                    // Permission not granted yet, skip detailed info
-                    appendLine("Adapter details: [Permission required]")
+                    // الصلاحية غير ممنوحة بعد، تخطي المعلومات التفصيلية
+                    appendLine("تفاصيل المحول: [صلاحية مطلوبة]")
                 } catch (e: Exception) {
-                    appendLine("Adapter details: [Error: ${e.message}]")
+                    appendLine("تفاصيل المحول: [خطأ: ${e.message}]")
                 }
-                appendLine("Adapter state: ${getAdapterStateName(adapter.state)}")
+                appendLine("حالة المحول: ${getAdapterStateName(adapter.state)}")
             }
         }
     }
 
     private fun getAdapterStateName(state: Int): String {
         return when (state) {
-            BluetoothAdapter.STATE_OFF -> "OFF"
-            BluetoothAdapter.STATE_TURNING_ON -> "TURNING_ON"
-            BluetoothAdapter.STATE_ON -> "ON"
-            BluetoothAdapter.STATE_TURNING_OFF -> "TURNING_OFF"
-            else -> "UNKNOWN($state)"
+            BluetoothAdapter.STATE_OFF -> "معطل"
+            BluetoothAdapter.STATE_TURNING_ON -> "جارٍ التفعيل"
+            BluetoothAdapter.STATE_ON -> "مفعّل"
+            BluetoothAdapter.STATE_TURNING_OFF -> "جارٍ التعطيل"
+            else -> "غير معروف($state)"
         }
     }
 
     /**
-     * Log current Bluetooth status for debugging
+     * تسجيل حالة البلوتوث الحالية لأغراض التصحيح
      */
     fun logBluetoothStatus() {
         Log.d(TAG, getDiagnostics())
@@ -206,10 +206,10 @@ class BluetoothStatusManager(
 }
 
 /**
- * Bluetooth status enum
+ * تعداد لحالة البلوتوث
  */
 enum class BluetoothStatus {
-    ENABLED,
-    DISABLED, 
-    NOT_SUPPORTED
+    ENABLED,  // مفعّل
+    DISABLED,  // معطل
+    NOT_SUPPORTED  // غير مدعوم
 }
