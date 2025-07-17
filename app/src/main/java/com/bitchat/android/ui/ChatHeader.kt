@@ -340,7 +340,7 @@ private fun MainHeader(
     ) {
         Row(verticalAlignment = Alignment.CenterVertically) {
             Text(
-                text = "bitchat*",
+                text = "بلو للرسائل",
                 style = MaterialTheme.typography.headlineSmall,
                 color = colorScheme.primary,
                 modifier = Modifier.clickable { onTitleClick() }
