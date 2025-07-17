@@ -15,15 +15,15 @@ class CommandProcessor(
     
     // Available commands list
     private val baseCommands = listOf(
-        CommandSuggestion("/block", emptyList(), "[nickname]", "block or list blocked peers"),
-        CommandSuggestion("/channels", emptyList(), null, "show all discovered channels"),
-        CommandSuggestion("/clear", emptyList(), null, "clear chat messages"),
-        CommandSuggestion("/hug", emptyList(), "<nickname>", "send someone a warm hug"),
-        CommandSuggestion("/j", listOf("/join"), "<channel>", "join or create a channel"),
-        CommandSuggestion("/m", listOf("/msg"), "<nickname> [message]", "send private message"),
-        CommandSuggestion("/slap", emptyList(), "<nickname>", "slap someone with a trout"),
-        CommandSuggestion("/unblock", emptyList(), "<nickname>", "unblock a peer"),
-        CommandSuggestion("/w", emptyList(), null, "see who's online")
+        CommandSuggestion("/block", emptyList(), "[اسم المستخدم]", "حظر مستخدم أو عرض قائمة المحظورين"),
+        CommandSuggestion("/channels", emptyList(), null, "عرض جميع القنوات المتاحة"),
+        CommandSuggestion("/clear", emptyList(), null, "مسح جميع الرسائل"),
+        CommandSuggestion("/hug", emptyList(), "<اسم المستخدم>", "إرسال عناق دافئ لشخص ما"),
+        CommandSuggestion("/j", listOf("/join"), "<اسم القناة>", "الانضمام إلى قناة أو إنشائها"),
+        CommandSuggestion("/m", listOf("/msg"), "<اسم المستخدم> [الرسالة]", "إرسال رسالة خاصة"),
+        CommandSuggestion("/slap", emptyList(), "<اسم المستخدم>", "صفع شخص ما بسمكة كبيرة"),
+        CommandSuggestion("/unblock", emptyList(), "<اسم المستخدم>", "إلغاء حظر مستخدم"),
+        CommandSuggestion("/w", emptyList(), null, "عرض المستخدمين المتصلين")
     )
     
     // MARK: - Command Processing
@@ -41,8 +41,8 @@ class CommandProcessor(
             "/clear" -> handleClearCommand()
             "/block" -> handleBlockCommand(parts, meshService)
             "/unblock" -> handleUnblockCommand(parts, meshService)
-            "/hug" -> handleActionCommand(parts, "gives", "a warm hug 🫂", meshService, myPeerID, onSendMessage)
-            "/slap" -> handleActionCommand(parts, "slaps", "around a bit with a large trout 🐟", meshService, myPeerID, onSendMessage)
+            "/hug" -> handleActionCommand(parts, "يعانق", "بعناق دافئ 🫂", meshService, myPeerID, onSendMessage)
+            "/slap" -> handleActionCommand(parts, "يصفع", "بسمكة كبيرة 🐟", meshService, myPeerID, onSendMessage)
             "/channels" -> handleChannelsCommand()
             else -> handleUnknownCommand(cmd)
         }
@@ -53,12 +53,12 @@ class CommandProcessor(
     private fun handleJoinCommand(parts: List<String>, myPeerID: String) {
         if (parts.size > 1) {
             val channelName = parts[1]
-            val channel = if (channelName.startsWith("#")) channelName else "#$channelName"
+            val channel = if (channelName.startsWith("")) channelName else "$channelName"
             val success = channelManager.joinChannel(channel, null, myPeerID)
             if (success) {
                 val systemMessage = BitchatMessage(
-                    sender = "system",
-                    content = "joined channel $channel",
+                    sender = "النظام",
+                    content = "لقد انضممت إلى القناة $channel",
                     timestamp = Date(),
                     isRelay = false
                 )
@@ -66,8 +66,8 @@ class CommandProcessor(
             }
         } else {
             val systemMessage = BitchatMessage(
-                sender = "system",
-                content = "usage: /join <channel>",
+                sender = "النظام",
+                content = "طريقة الاستخدام: /join <اسم القناة>",
                 timestamp = Date(),
                 isRelay = false
             )
@@ -99,8 +99,8 @@ class CommandProcessor(
                         }
                     } else {
                         val systemMessage = BitchatMessage(
-                            sender = "system",
-                            content = "started private chat with $targetName",
+                            sender = "النظام",
+                            content = "بدأت محادثة خاصة مع $targetName",
                             timestamp = Date(),
                             isRelay = false
                         )
@@ -109,8 +109,8 @@ class CommandProcessor(
                 }
             } else {
                 val systemMessage = BitchatMessage(
-                    sender = "system",
-                    content = "user '$targetName' not found. they may be offline or using a different nickname.",
+                    sender = "النظام",
+                    content = "لم يتم العثور على المستخدم '$targetName'. قد يكون غير متصل أو يستخدم اسمًا مختلفًا.",
                     timestamp = Date(),
                     isRelay = false
                 )
@@ -118,8 +118,8 @@ class CommandProcessor(
             }
         } else {
             val systemMessage = BitchatMessage(
-                sender = "system",
-                content = "usage: /msg <nickname> [message]",
+                sender = "النظام",
+                content = "طريقة الاستخدام: /msg <اسم المستخدم> [الرسالة]",
                 timestamp = Date(),
                 isRelay = false
             )
@@ -135,11 +135,11 @@ class CommandProcessor(
         }
         
         val systemMessage = BitchatMessage(
-            sender = "system",
+            sender = "النظام",
             content = if (connectedPeers.isEmpty()) {
-                "no one else is online right now."
+                "لا يوجد مستخدمون آخرون متصلون الآن."
             } else {
-                "online users: $peerList"
+                "المستخدمون المتصلون: $peerList"
             },
             timestamp = Date(),
             isRelay = false
@@ -174,7 +174,7 @@ class CommandProcessor(
             // List blocked users
             val blockedInfo = privateChatManager.listBlockedUsers()
             val systemMessage = BitchatMessage(
-                sender = "system",
+                sender = "النظام",
                 content = blockedInfo,
                 timestamp = Date(),
                 isRelay = false
@@ -189,8 +189,8 @@ class CommandProcessor(
             privateChatManager.unblockPeerByNickname(targetName, meshService)
         } else {
             val systemMessage = BitchatMessage(
-                sender = "system",
-                content = "usage: /unblock <nickname>",
+                sender = "النظام",
+                content = "طريقة الاستخدام: /unblock <اسم المستخدم>",
                 timestamp = Date(),
                 isRelay = false
             )
@@ -208,7 +208,7 @@ class CommandProcessor(
     ) {
         if (parts.size > 1) {
             val targetName = parts[1].removePrefix("@")
-            val actionMessage = "* ${state.getNicknameValue() ?: "someone"} $verb $targetName $object_ *"
+            val actionMessage = "* ${state.getNicknameValue() ?: "شخص ما"} $verb $targetName $object_ *"
             
             // Send as regular message
             if (state.getSelectedPrivateChatPeerValue() != null) {
@@ -242,8 +242,8 @@ class CommandProcessor(
             }
         } else {
             val systemMessage = BitchatMessage(
-                sender = "system",
-                content = "usage: /${parts[0].removePrefix("/")} <nickname>",
+                sender = "النظام",
+                content = "طريقة الاستخدام: /${parts[0].removePrefix("/")} <اسم المستخدم>",
                 timestamp = Date(),
                 isRelay = false
             )
@@ -254,13 +254,13 @@ class CommandProcessor(
     private fun handleChannelsCommand() {
         val allChannels = channelManager.getJoinedChannelsList()
         val channelList = if (allChannels.isEmpty()) {
-            "no channels joined"
+            "لم تنضم إلى أي قناة"
         } else {
-            "joined channels: ${allChannels.joinToString(", ")}"
+            "القنوات التي أنت عضو فيها: ${allChannels.joinToString(", ")}"
         }
         
         val systemMessage = BitchatMessage(
-            sender = "system",
+            sender = "النظام",
             content = channelList,
             timestamp = Date(),
             isRelay = false
@@ -270,8 +270,8 @@ class CommandProcessor(
     
     private fun handleUnknownCommand(cmd: String) {
         val systemMessage = BitchatMessage(
-            sender = "system",
-            content = "unknown command: $cmd. type / to see available commands.",
+            sender = "النظام",
+            content = "أمر غير معروف: $cmd. اكتب / لرؤية الأوامر المتاحة.",
             timestamp = Date(),
             isRelay = false
         )
@@ -306,9 +306,9 @@ class CommandProcessor(
         // Add channel-specific commands if in a channel
         val channelCommands = if (state.getCurrentChannelValue() != null) {
             listOf(
-                CommandSuggestion("/pass", emptyList(), "[password]", "change channel password"),
-                CommandSuggestion("/save", emptyList(), null, "save channel messages locally"),
-                CommandSuggestion("/transfer", emptyList(), "<nickname>", "transfer channel ownership")
+                CommandSuggestion("/pass", emptyList(), "[كلمة المرور]", "تغيير كلمة مرور القناة"),
+                CommandSuggestion("/save", emptyList(), null, "حفظ رسائل القناة محليًا"),
+                CommandSuggestion("/transfer", emptyList(), "<اسم المستخدم>", "نقل ملكية القناة")
             )
         } else {
             emptyList()
@@ -358,9 +358,9 @@ class CommandProcessor(
         return try {
             val field = meshService::class.java.getDeclaredField("myPeerID")
             field.isAccessible = true
-            field.get(meshService) as? String ?: "unknown"
+            field.get(meshService) as? String ?: "غير معروف"
         } catch (e: Exception) {
-            "unknown"
+            "غير معروف"
         }
     }
     
