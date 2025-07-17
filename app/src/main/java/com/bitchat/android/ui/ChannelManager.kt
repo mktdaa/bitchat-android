@@ -28,7 +28,7 @@ class ChannelManager(
     // MARK: - Channel Lifecycle
     
     fun joinChannel(channel: String, password: String? = null, myPeerID: String): Boolean {
-        val channelTag = if (channel.startsWith("#")) channel else "#$channel"
+        val channelTag = if (channel.startsWith("")) channel else "$channel"
         
         // Check if already joined
         if (state.getJoinedChannelsValue().contains(channelTag)) {
