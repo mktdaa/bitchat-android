@@ -171,7 +171,7 @@ fun ChannelsSection(
             )
             Spacer(modifier = Modifier.width(6.dp))
             Text(
-                text = "CHANNELS",
+                text = "قنوات",
                 style = MaterialTheme.typography.labelSmall,
                 color = colorScheme.onSurface.copy(alpha = 0.6f),
                 fontWeight = FontWeight.Bold
