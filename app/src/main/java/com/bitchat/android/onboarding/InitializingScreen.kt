@@ -14,13 +14,13 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 
 /**
- * Loading screen shown during app initialization after permissions are granted
+ * شاشة التحميل التي تظهر أثناء تهيئة التطبيق بعد منح الصلاحيات
  */
 @Composable
 fun InitializingScreen() {
     val colorScheme = MaterialTheme.colorScheme
     
-    // Animated rotation for the loading indicator
+    // دوران متحرك لمؤشر التحميل
     val infiniteTransition = rememberInfiniteTransition(label = "loading")
     val rotationAngle by infiniteTransition.animateFloat(
         initialValue = 0f,
@@ -32,7 +32,7 @@ fun InitializingScreen() {
         label = "rotation"
     )
 
-    // Animated dots for loading text
+    // نقاط متحركة لنص التحميل
     val dotCount = 3
     val animationDelay = 300
     val dots = (0 until dotCount).map { index ->
@@ -59,18 +59,18 @@ fun InitializingScreen() {
             verticalArrangement = Arrangement.spacedBy(32.dp),
             horizontalAlignment = Alignment.CenterHorizontally
         ) {
-            // App title
+            // عنوان التطبيق
             Text(
-                text = "bitchat*",
+                text = "بلو للرسائل",
                 style = MaterialTheme.typography.headlineLarge.copy(
                     fontFamily = FontFamily.Monospace,
                     fontWeight = FontWeight.Bold,
-                    color = colorScheme.primary
+                    color = Color(0xFF2196F3) // اللون الأزرق
                 ),
                 textAlign = TextAlign.Center
             )
 
-            // Loading indicator
+            // مؤشر التحميل
             Box(
                 modifier = Modifier.size(60.dp),
                 contentAlignment = Alignment.Center
@@ -79,25 +79,25 @@ fun InitializingScreen() {
                     modifier = Modifier
                         .fillMaxSize()
                         .rotate(rotationAngle),
-                    color = colorScheme.primary,
+                    color = Color(0xFF2196F3), // اللون الأزرق
                     strokeWidth = 3.dp
                 )
             }
 
-            // Loading text with animated dots
+            // نص التحميل مع نقاط متحركة
             Row(
                 verticalAlignment = Alignment.CenterVertically,
                 horizontalArrangement = Arrangement.Center
             ) {
                 Text(
-                    text = "Initializing mesh network",
+                    text = "جاري تهيئة شبكة البلوتوث",
                     style = MaterialTheme.typography.bodyLarge.copy(
                         fontFamily = FontFamily.Monospace,
                         color = colorScheme.onSurface.copy(alpha = 0.7f)
                     )
                 )
                 
-                // Animated dots
+                // النقاط المتحركة
                 dots.forEach { alpha ->
                     Text(
                         text = ".",
@@ -111,7 +111,7 @@ fun InitializingScreen() {
 
             Spacer(modifier = Modifier.height(16.dp))
 
-            // Status message
+            // رسالة الحالة
             Card(
                 modifier = Modifier.fillMaxWidth(),
                 colors = CardDefaults.cardColors(
@@ -125,7 +125,7 @@ fun InitializingScreen() {
                     horizontalAlignment = Alignment.CenterHorizontally
                 ) {
                     Text(
-                        text = "Setting up Bluetooth mesh networking...",
+                        text = "جاري إعداد شبكة البلوتوث اللاسلكية...",
                         style = MaterialTheme.typography.bodyMedium.copy(
                             fontFamily = FontFamily.Monospace,
                             color = colorScheme.onSurface.copy(alpha = 0.8f)
@@ -134,7 +134,7 @@ fun InitializingScreen() {
                     )
                     
                     Text(
-                        text = "This should only take a few seconds",
+                        text = "هذه العملية تستغرق بضع ثوانٍ فقط",
                         style = MaterialTheme.typography.bodySmall.copy(
                             fontFamily = FontFamily.Monospace,
                             color = colorScheme.onSurface.copy(alpha = 0.6f)
@@ -148,7 +148,7 @@ fun InitializingScreen() {
 }
 
 /**
- * Error screen shown if initialization fails
+ * شاشة الخطأ التي تظهر في حالة فشل التهيئة
  */
 @Composable
 fun InitializationErrorScreen(
@@ -168,7 +168,7 @@ fun InitializationErrorScreen(
             verticalArrangement = Arrangement.spacedBy(24.dp),
             horizontalAlignment = Alignment.CenterHorizontally
         ) {
-            // Error indicator
+            // مؤشر الخطأ
             Card(
                 colors = CardDefaults.cardColors(
                     containerColor = Color(0xFFFFEBEE)
@@ -183,7 +183,7 @@ fun InitializationErrorScreen(
             }
 
             Text(
-                text = "Setup Not Complete",
+                text = "فشل إعداد التطبيق",
                 style = MaterialTheme.typography.headlineSmall.copy(
                     fontFamily = FontFamily.Monospace,
                     fontWeight = FontWeight.Bold,
@@ -216,10 +216,13 @@ fun InitializationErrorScreen(
             ) {
                 Button(
                     onClick = onRetry,
-                    modifier = Modifier.fillMaxWidth()
+                    modifier = Modifier.fillMaxWidth(),
+                    colors = ButtonDefaults.buttonColors(
+                        containerColor = Color(0xFF2196F3) // اللون الأزرق
+                    )
                 ) {
                     Text(
-                        text = "Try Again",
+                        text = "إعادة المحاولة",
                         style = MaterialTheme.typography.bodyMedium.copy(
                             fontFamily = FontFamily.Monospace,
                             fontWeight = FontWeight.Bold
@@ -233,7 +236,7 @@ fun InitializationErrorScreen(
                     modifier = Modifier.fillMaxWidth()
                 ) {
                     Text(
-                        text = "Open Settings",
+                        text = "فتح الإعدادات",
                         style = MaterialTheme.typography.bodyMedium.copy(
                             fontFamily = FontFamily.Monospace
                         ),
