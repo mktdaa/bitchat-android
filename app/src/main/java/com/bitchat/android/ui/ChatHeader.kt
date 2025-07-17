@@ -41,7 +41,7 @@ fun NicknameEditor(
         modifier = modifier
     ) {
         Text(
-            text = "@",
+            text = "",
             style = MaterialTheme.typography.bodyMedium,
             color = colorScheme.primary.copy(alpha = 0.8f)
         )
