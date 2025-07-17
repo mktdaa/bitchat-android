@@ -88,7 +88,7 @@ fun PeerCounter(
                 contentAlignment = Alignment.Center
             ) {
                 Text(
-                    text = "#",
+                    text = "",
                     style = MaterialTheme.typography.bodyMedium,
                     color = Color(0xFF0080FF),
                     fontSize = 16.sp
@@ -290,7 +290,7 @@ private fun ChannelHeader(
                 )
                 Spacer(modifier = Modifier.width(4.dp))
                 Text(
-                    text = "back",
+                    text = "رجوع",
                     style = MaterialTheme.typography.bodyMedium,
                     color = colorScheme.primary
                 )
@@ -300,7 +300,7 @@ private fun ChannelHeader(
         Spacer(modifier = Modifier.weight(1f))
         
         Text(
-            text = "channel: $channel",
+            text = "قناة: $channel",
             style = MaterialTheme.typography.titleMedium,
             color = Color(0xFF0080FF), // Blue
             modifier = Modifier.clickable { onSidebarClick() }
@@ -310,7 +310,7 @@ private fun ChannelHeader(
         
         TextButton(onClick = onLeaveChannel) {
             Text(
-                text = "leave",
+                text = "مغادرة",
                 style = MaterialTheme.typography.bodySmall,
                 color = Color.Red
             )
