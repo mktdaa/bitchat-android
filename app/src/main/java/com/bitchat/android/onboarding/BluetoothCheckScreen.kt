@@ -17,7 +17,7 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 
 /**
- * Screen shown when checking Bluetooth status or requesting Bluetooth enable
+ * شاشة تظهر عند التحقق من حالة البلوتوث أو طلب تفعيله
  */
 @Composable
 fun BluetoothCheckScreen(
@@ -68,16 +68,16 @@ private fun BluetoothDisabledContent(
         verticalArrangement = Arrangement.spacedBy(24.dp),
         horizontalAlignment = Alignment.CenterHorizontally
     ) {
-        // Bluetooth icon - using Bluetooth outlined icon in app's green color
+        // أيقونة البلوتوث - باستخدام لون التطبيق الأزرق
         Icon(
             imageVector = Icons.Outlined.Bluetooth,
-            contentDescription = "Bluetooth",
+            contentDescription = "بلوتوث",
             modifier = Modifier.size(64.dp),
-            tint = Color(0xFF00C851) // App's main green color
+            tint = Color(0xFF2196F3) // اللون الأزرق الرئيسي للتطبيق
         )
 
         Text(
-            text = "Bluetooth Required",
+            text = "البلوتوث مطلوب",
             style = MaterialTheme.typography.headlineSmall.copy(
                 fontFamily = FontFamily.Monospace,
                 fontWeight = FontWeight.Bold,
@@ -98,7 +98,7 @@ private fun BluetoothDisabledContent(
                 verticalArrangement = Arrangement.spacedBy(8.dp)
             ) {
                 Text(
-                    text = "bitchat needs Bluetooth to:",
+                    text = "بلو للرسائل يحتاج إلى البلوتوث من أجل:",
                     style = MaterialTheme.typography.bodyMedium.copy(
                         fontWeight = FontWeight.Medium,
                         color = colorScheme.onSurface
@@ -108,10 +108,10 @@ private fun BluetoothDisabledContent(
                 )
                 
                 Text(
-                    text = "• Discover nearby users\n" +
-                            "• Create mesh network connections\n" +
-                            "• Send and receive messages\n" +
-                            "• Work without internet or servers",
+                    text = "• اكتشاف المستخدمين القريبين\n" +
+                            "• إنشاء اتصالات شبكية\n" +
+                            "• إرسال واستقبال الرسائل\n" +
+                            "• العمل بدون إنترنت أو سيرفرات",
                     style = MaterialTheme.typography.bodySmall.copy(
                         fontFamily = FontFamily.Monospace,
                         color = colorScheme.onSurface.copy(alpha = 0.8f)
@@ -131,11 +131,11 @@ private fun BluetoothDisabledContent(
                     onClick = onEnableBluetooth,
                     modifier = Modifier.fillMaxWidth(),
                     colors = ButtonDefaults.buttonColors(
-                        containerColor = Color(0xFF00C851) // App's main green color
+                        containerColor = Color(0xFF2196F3) // اللون الأزرق
                     )
                 ) {
                     Text(
-                        text = "Enable Bluetooth",
+                        text = "تفعيل البلوتوث",
                         style = MaterialTheme.typography.bodyMedium.copy(
                             fontFamily = FontFamily.Monospace,
                             fontWeight = FontWeight.Bold
@@ -149,7 +149,7 @@ private fun BluetoothDisabledContent(
                     modifier = Modifier.fillMaxWidth()
                 ) {
                     Text(
-                        text = "Check Again",
+                        text = "إعادة الفحص",
                         style = MaterialTheme.typography.bodyMedium.copy(
                             fontFamily = FontFamily.Monospace
                         ),
@@ -169,7 +169,7 @@ private fun BluetoothNotSupportedContent(
         verticalArrangement = Arrangement.spacedBy(24.dp),
         horizontalAlignment = Alignment.CenterHorizontally
     ) {
-        // Error icon
+        // أيقونة الخطأ
         Card(
             colors = CardDefaults.cardColors(
                 containerColor = Color(0xFFFFEBEE)
@@ -184,7 +184,7 @@ private fun BluetoothNotSupportedContent(
         }
 
         Text(
-            text = "Bluetooth Not Supported",
+            text = "البلوتوث غير مدعوم",
             style = MaterialTheme.typography.headlineSmall.copy(
                 fontFamily = FontFamily.Monospace,
                 fontWeight = FontWeight.Bold,
@@ -201,7 +201,7 @@ private fun BluetoothNotSupportedContent(
             elevation = CardDefaults.cardElevation(defaultElevation = 2.dp)
         ) {
             Text(
-                text = "This device doesn't support Bluetooth Low Energy (BLE), which is required for bitchat to function.\n\nbitchat needs BLE to create mesh networks and communicate with nearby devices without internet.",
+                text = "هذا الجهاز لا يدعم تقنية البلوتوث منخفض الطاقة (BLE) المطلوبة لعمل التطبيق.\n\nبلو للرسائل يحتاج إلى BLE لإنشاء شبكات لاسلكية والتواصل مع الأجهزة القريبة بدون إنترنت.",
                 style = MaterialTheme.typography.bodyMedium.copy(
                     fontFamily = FontFamily.Monospace,
                     color = colorScheme.onSurface
@@ -222,11 +222,11 @@ private fun BluetoothCheckingContent(
         horizontalAlignment = Alignment.CenterHorizontally
     ) {
         Text(
-            text = "bitchat*",
+            text = "بلو للرسائل",
             style = MaterialTheme.typography.headlineLarge.copy(
                 fontFamily = FontFamily.Monospace,
                 fontWeight = FontWeight.Bold,
-                color = colorScheme.primary
+                color = Color(0xFF2196F3) // اللون الأزرق
             ),
             textAlign = TextAlign.Center
         )
@@ -234,7 +234,7 @@ private fun BluetoothCheckingContent(
         BluetoothLoadingIndicator()
 
         Text(
-            text = "Checking Bluetooth status...",
+            text = "جارٍ التحقق من حالة البلوتوث...",
             style = MaterialTheme.typography.bodyLarge.copy(
                 fontFamily = FontFamily.Monospace,
                 color = colorScheme.onSurface.copy(alpha = 0.7f)
@@ -245,7 +245,7 @@ private fun BluetoothCheckingContent(
 
 @Composable
 private fun BluetoothLoadingIndicator() {
-    // Animated rotation for the loading indicator
+    // دوران متحرك لمؤشر التحميل
     val infiniteTransition = rememberInfiniteTransition(label = "bluetooth_loading")
     val rotationAngle by infiniteTransition.animateFloat(
         initialValue = 0f,
@@ -265,7 +265,7 @@ private fun BluetoothLoadingIndicator() {
             modifier = Modifier
                 .fillMaxSize()
                 .rotate(rotationAngle),
-            color = Color(0xFF2196F3), // Bluetooth blue
+            color = Color(0xFF2196F3), // اللون الأزرق
             strokeWidth = 3.dp
         )
     }
