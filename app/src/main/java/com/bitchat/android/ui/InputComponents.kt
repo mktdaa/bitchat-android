@@ -47,9 +47,9 @@ fun MessageInput(
         // Fixed: Remove arrow from private message input
         Text(
             text = when {
-                selectedPrivatePeer != null -> "<@$nickname>"  // Removed arrow for private
-                currentChannel != null -> "<@$nickname> →"  // Keep arrow for channels
-                else -> "<@$nickname>"
+                selectedPrivatePeer != null -> "<$nickname>"  // Removed arrow for private
+                currentChannel != null -> "<$nickname> →"  // Keep arrow for channels
+                else -> "<$nickname>"
             },
             style = MaterialTheme.typography.bodySmall.copy(fontWeight = FontWeight.Medium),
             color = when {
