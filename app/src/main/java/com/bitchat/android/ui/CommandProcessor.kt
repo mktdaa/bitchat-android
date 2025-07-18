@@ -77,7 +77,7 @@ class CommandProcessor(
     
     private fun handleMessageCommand(parts: List<String>, meshService: Any) {
         if (parts.size > 1) {
-            val targetName = parts[1].removePrefix("@")
+            val targetName = parts[1].removePrefix("")
             val peerID = getPeerIDForNickname(targetName, meshService)
             
             if (peerID != null) {
@@ -168,7 +168,7 @@ class CommandProcessor(
     
     private fun handleBlockCommand(parts: List<String>, meshService: Any) {
         if (parts.size > 1) {
-            val targetName = parts[1].removePrefix("@")
+            val targetName = parts[1].removePrefix("")
             privateChatManager.blockPeerByNickname(targetName, meshService)
         } else {
             // List blocked users
@@ -185,7 +185,7 @@ class CommandProcessor(
     
     private fun handleUnblockCommand(parts: List<String>, meshService: Any) {
         if (parts.size > 1) {
-            val targetName = parts[1].removePrefix("@")
+            val targetName = parts[1].removePrefix("")
             privateChatManager.unblockPeerByNickname(targetName, meshService)
         } else {
             val systemMessage = BitchatMessage(
@@ -207,7 +207,7 @@ class CommandProcessor(
         onSendMessage: (String, List<String>, String?) -> Unit
     ) {
         if (parts.size > 1) {
-            val targetName = parts[1].removePrefix("@")
+            val targetName = parts[1].removePrefix("")
             val actionMessage = "* ${state.getNicknameValue() ?: "شخص ما"} $verb $targetName $object_ *"
             
             // Send as regular message
