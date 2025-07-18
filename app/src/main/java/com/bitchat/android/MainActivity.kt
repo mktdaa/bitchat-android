@@ -257,22 +257,29 @@ class MainActivity : ComponentActivity() {
     }
     
     private fun handleOnboardingComplete() {
-        android.util.Log.d("MainActivity", "Onboarding completed, checking Bluetooth again before initializing app")
-        
-        // After permissions are granted, re-check Bluetooth status
-        val currentBluetoothStatus = bluetoothStatusManager.checkBluetoothStatus()
-        if (currentBluetoothStatus == BluetoothStatus.ENABLED) {
-            // Bluetooth is enabled, proceed to app initialization
-            onboardingState = OnboardingState.INITIALIZING
-            initializeApp()
-        } else {
-            // Bluetooth still disabled, but now we have permissions to enable it
-            android.util.Log.d("MainActivity", "Permissions granted, but Bluetooth still disabled. Showing Bluetooth enable screen.")
-            bluetoothStatus = currentBluetoothStatus
-            onboardingState = OnboardingState.BLUETOOTH_CHECK
-            isBluetoothLoading = false
-        }
+    android.util.Log.d("MainActivity", "Onboarding completed, checking Bluetooth again before initializing app")
+
+    // ✅ حفظ اسم المستخدم في SharedPreferences (مرة واحدة)
+    val prefs = getSharedPreferences("prefs", MODE_PRIVATE)
+    if (!prefs.contains("username")) {
+        prefs.edit().putString("username", "BitChatUser").apply() // يمكنك تغيير الاسم لاحقًا حسب مدخل المستخدم
     }
+
+    // ✅ تشغيل خدمة البلوتوث في الخلفية
+    val serviceIntent = Intent(this, BluetoothService::class.java)
+    ContextCompat.startForegroundService(this, serviceIntent)
+
+    val currentBluetoothStatus = bluetoothStatusManager.checkBluetoothStatus()
+    if (currentBluetoothStatus == BluetoothStatus.ENABLED) {
+        onboardingState = OnboardingState.INITIALIZING
+        initializeApp()
+    } else {
+        android.util.Log.d("MainActivity", "Permissions granted, but Bluetooth still disabled. Showing Bluetooth enable screen.")
+        bluetoothStatus = currentBluetoothStatus
+        onboardingState = OnboardingState.BLUETOOTH_CHECK
+        isBluetoothLoading = false
+    }
+}
     
     private fun handleOnboardingFailed(message: String) {
         android.util.Log.e("MainActivity", "Onboarding failed: $message")
