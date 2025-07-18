@@ -67,7 +67,7 @@ fun formatMessageAsAnnotatedString(
             fontSize = 14.sp,
             fontWeight = FontWeight.Medium
         ))
-        builder.append("<@${message.sender}> ")
+        builder.append("<${message.sender}> ")
         builder.pop()
         
         // Message content with mentions and hashtags highlighted
