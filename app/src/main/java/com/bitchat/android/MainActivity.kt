@@ -23,6 +23,7 @@ import com.bitchat.android.ui.ChatViewModel
 import com.bitchat.android.ui.theme.BitchatTheme
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
+import androidx.core.content.ContextCompat
 
 class MainActivity : ComponentActivity() {
     
